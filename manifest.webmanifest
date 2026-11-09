@@ -3,7 +3,7 @@
   "name": "T.A.D.",
   "short_name": "T.A.D.",
   "description": "Keeping one's affairs in order. Or at least attempting to.",
-  "start_url": "/the-admin-department/?app=3",
+  "start_url": "/the-admin-department/?install=4",
   "scope": "/the-admin-department/",
   "display": "standalone",
   "orientation": "portrait",
@@ -11,7 +11,7 @@
   "background_color": "#F6F2E9",
   "icons": [
     {
-      "src": "./icon.svg?v=3",
+      "src": "./icon-tad.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
