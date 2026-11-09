@@ -66,9 +66,9 @@
             font-size:11px; letter-spacing:.035em; line-height:1.45;
           }
           /* Reduce the app's base type scale so rem/em-based text becomes more compact. Keep the brand banner at its original size. */
-          html { font-size: 90% !important; }
-          body { font-size: 1rem !important; }
-          #admin-brand-header { font-size: initial !important; }
+          /* Fixed-size text in the original app needs a visual scale, not just a smaller root font. */
+          body { zoom: .90; }
+          #admin-brand-header { zoom: 1.111111; font-size: initial !important; }
           #admin-brand-header .brand-name { font-size: clamp(19px,3vw,25px) !important; }
           #admin-brand-header .brand-line { font-size: 11px !important; }
           @media(max-width:700px) {
