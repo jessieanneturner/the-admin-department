@@ -40,23 +40,6 @@
           }
         };
 
-        if (!doc.getElementById("admin-compact-type")) {
-          const typeStyle = doc.createElement("style");
-          typeStyle.id = "admin-compact-type";
-          typeStyle.textContent = `
-            /* Compact typography inside the actual app iframe; leave the brand banner alone. */
-            body :is(h1,h2,h3,h4,p,span,label,button,input,textarea,select,small,strong,b,li,th,td) {
-              font-size: .90em !important;
-            }
-            body :is(.muted,.section-title,.sectionhead,.dept,.navlabel,.sidefoot,.empty,.item,.note,.routinehint) {
-              font-size: .90em !important;
-            }
-            #pageTitle { font-size: 1.35rem !important; }
-            #admin-brand-header, #admin-brand-header * { font-size: revert !important; }
-          `;
-          doc.head.appendChild(typeStyle);
-        }
-
         const main = doc.querySelector("main.main") || doc.querySelector("main");
         const top = main && main.querySelector(".top");
         if (!main || !top) return false;
@@ -82,10 +65,12 @@
             font-family:"Courier New", Courier, monospace;
             font-size:11px; letter-spacing:.035em; line-height:1.45;
           }
-          /* A slightly more compact type scale throughout the app. The separate brand banner above is intentionally untouched. */
-          body :is(h1,h2,h3,h4,p,span,label,button,input,textarea,select,small,strong,b,li,th,td,.navlabel,.sidefoot,.date,.muted,.dept,.routinehint,.sectionhead,.item,.note,.empty,.bottom) {
-            font-size: 94% !important;
-          }
+          /* Reduce the app's base type scale so rem/em-based text becomes more compact. Keep the brand banner at its original size. */
+          html { font-size: 90% !important; }
+          body { font-size: 1rem !important; }
+          #admin-brand-header { font-size: initial !important; }
+          #admin-brand-header .brand-name { font-size: clamp(19px,3vw,25px) !important; }
+          #admin-brand-header .brand-line { font-size: 11px !important; }
           @media(max-width:700px) {
             #admin-brand-header { padding:15px 17px 13px; margin-bottom:15px; border-radius:11px; }
           }
