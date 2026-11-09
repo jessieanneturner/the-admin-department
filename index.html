@@ -20,10 +20,31 @@
   <iframe id="adminApp" src="./app.html" title="The Admin Department"></iframe>
   <script>
     const frame = document.getElementById("adminApp");
-    frame.addEventListener("load", () => {
+    function enhanceAdminApp() {
       try {
+        const app = frame.contentWindow;
         const doc = frame.contentDocument;
-        if (!doc || doc.getElementById("admin-brand-header")) return;
+        if (!app || !doc) return false;
+
+        // Keep the improved department page menu rather than the old number prompt.
+        app.toggleMenu = () => {
+          app.show("Menu");
+          const title = doc.getElementById("pageTitle");
+          if (title) title.textContent = "Departments";
+          const view = doc.getElementById("view");
+          if (view && !view.querySelector(".menu-intro")) {
+            const intro = doc.createElement("p");
+            intro.className = "muted menu-intro";
+            intro.textContent = "Everything in its proper department. In theory.";
+            view.prepend(intro);
+          }
+        };
+
+        const main = doc.querySelector("main.main") || doc.querySelector("main");
+        const top = main && main.querySelector(".top");
+        if (!main || !top) return false;
+        if (doc.getElementById("admin-brand-header")) return true;
+
         const style = doc.createElement("style");
         style.textContent = `
           #admin-brand-header {
@@ -52,13 +73,27 @@
         const brand = doc.createElement("section");
         brand.id = "admin-brand-header";
         brand.setAttribute("aria-label", "The Admin Department");
-        brand.innerHTML = '<h2 class="brand-name">The Admin Department</h2><p class="brand-line">Keeping one\'s affairs in order. Or at least attempting to.</p>';
-        const main = doc.querySelector("main");
-        const top = main && main.querySelector(".top");
-        if (main && top) main.insertBefore(brand, top);
+        const name = doc.createElement("h2");
+        name.className = "brand-name";
+        name.textContent = "The Admin Department";
+        const line = doc.createElement("p");
+        line.className = "brand-line";
+        line.textContent = "Keeping one's affairs in order. Or at least attempting to.";
+        brand.append(name, line);
+        main.insertBefore(brand, top);
+        return true;
       } catch (error) {
-        console.warn("Could not add the dashboard heading.", error);
+        console.warn("Could not enhance The Admin Department.", error);
+        return false;
       }
+    }
+    frame.addEventListener("load", () => {
+      let attempts = 0;
+      const retry = () => {
+        if (enhanceAdminApp() || attempts++ > 30) return;
+        setTimeout(retry, 150);
+      };
+      retry();
     });
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
