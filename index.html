@@ -65,6 +65,10 @@
             font-family:"Courier New", Courier, monospace;
             font-size:11px; letter-spacing:.035em; line-height:1.45;
           }
+          /* A slightly more compact type scale throughout the app. The separate brand banner above is intentionally untouched. */
+          body :is(h1,h2,h3,h4,p,span,label,button,input,textarea,select,small,strong,b,li,th,td,.navlabel,.sidefoot,.date,.muted,.dept,.routinehint,.sectionhead,.item,.note,.empty,.bottom) {
+            font-size: 94% !important;
+          }
           @media(max-width:700px) {
             #admin-brand-header { padding:15px 17px 13px; margin-bottom:15px; border-radius:11px; }
           }
