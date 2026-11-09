@@ -65,17 +65,33 @@
             font-family:"Courier New", Courier, monospace;
             font-size:11px; letter-spacing:.035em; line-height:1.45;
           }
-          /* Reduce the app's base type scale so rem/em-based text becomes more compact. Keep the brand banner at its original size. */
-          /* Fixed-size text in the original app needs a visual scale, not just a smaller root font. */
-          body { zoom: .90; }
-          #admin-brand-header { zoom: 1.111111; font-size: initial !important; }
+          /* Keep desktop typography unchanged; compact the actual fixed-size text on phones. */
           #admin-brand-header .brand-name { font-size: clamp(19px,3vw,25px) !important; }
           #admin-brand-header .brand-line { font-size: 11px !important; }
           @media(max-width:700px) {
+            body { font-size:13px !important; }
+            h1 { font-size:25px !important; }
+            .panel h2 { font-size:16px !important; }
+            .sectionhead h2 { font-size:20px !important; }
+            .itemtext, .note strong { font-size:13px !important; }
+            .note p, .muted, .empty, .dept span, .date { font-size:11.5px !important; }
+            .dept b { font-size:15px !important; }
+            .primary, .secondary, input, select, textarea { font-size:13px !important; }
+            body.admin-today .panel h2 { font-size:15px !important; }
+            body.admin-today .itemtext { font-size:12.5px !important; }
+            body.admin-today .note p { font-size:11.5px !important; }
             #admin-brand-header { padding:15px 17px 13px; margin-bottom:15px; border-radius:11px; }
           }
         `;
         doc.head.appendChild(style);
+        const pageTitle = doc.getElementById("pageTitle");
+        const updatePageClass = () => doc.body.classList.toggle("admin-today", !!pageTitle && pageTitle.textContent.trim() === "Today");
+        updatePageClass();
+        if (pageTitle && !doc.body.dataset.adminPageObserver) {
+          const observer = new app.MutationObserver(updatePageClass);
+          observer.observe(pageTitle, { childList: true, characterData: true, subtree: true });
+          doc.body.dataset.adminPageObserver = "1";
+        }
         const brand = doc.createElement("section");
         brand.id = "admin-brand-header";
         brand.setAttribute("aria-label", "The Admin Department");
