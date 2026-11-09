@@ -1,0 +1,20 @@
+{
+  "id": "/the-admin-department/",
+  "name": "The Admin Department",
+  "short_name": "Admin Dept",
+  "description": "Keeping one's affairs in order. Or at least attempting to.",
+  "start_url": "/the-admin-department/",
+  "scope": "/the-admin-department/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#203B30",
+  "background_color": "#F6F2E9",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
