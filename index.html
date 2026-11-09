@@ -19,63 +19,45 @@
 <body>
   <iframe id="adminApp" src="./app.html" title="The Admin Department"></iframe>
   <script>
-    const appFrame = document.getElementById("adminApp");
-    appFrame.addEventListener("load", () => {
+    const frame = document.getElementById("adminApp");
+    frame.addEventListener("load", () => {
       try {
-        const app = appFrame.contentWindow;
-        const doc = app.document;
+        const doc = frame.contentDocument;
+        if (!doc || doc.getElementById("admin-brand-header")) return;
         const style = doc.createElement("style");
         style.textContent = `
-          .brand-masthead {
-            display:flex; flex-direction:column; gap:5px;
-            padding:17px 22px 15px; margin:0 0 20px;
+          #admin-brand-header {
+            display:flex; flex-direction:column; gap:6px;
+            padding:18px 22px 16px; margin:0 0 19px;
             background:#203B30; color:#F6F2E9;
-            border-radius:14px; border:1px solid rgba(73,56,45,.22);
+            border:1px solid rgba(73,56,45,.22); border-radius:13px;
             box-shadow:0 5px 18px rgba(32,59,48,.10);
           }
-          .brand-masthead strong {
+          #admin-brand-header .brand-name {
+            margin:0; color:#F6F2E9;
             font-family:"Courier New", Courier, monospace;
-            font-size:clamp(18px,3vw,25px); font-weight:700;
-            letter-spacing:.035em; line-height:1.2;
+            font-size:clamp(19px,3vw,25px); font-weight:700;
+            letter-spacing:.025em; line-height:1.2;
           }
-          .brand-masthead span {
+          #admin-brand-header .brand-line {
+            margin:0; color:#E9E3D7;
             font-family:"Courier New", Courier, monospace;
-            font-size:11px; letter-spacing:.045em; color:#E9E3D7;
+            font-size:11px; letter-spacing:.035em; line-height:1.45;
           }
           @media(max-width:700px) {
-            .brand-masthead { padding:15px 17px 13px; margin-bottom:16px; border-radius:12px; }
+            #admin-brand-header { padding:15px 17px 13px; margin-bottom:15px; border-radius:11px; }
           }
         `;
         doc.head.appendChild(style);
-        const main = doc.querySelector("main.main");
-        const header = doc.createElement("div");
-        header.className = "brand-masthead";
-        header.innerHTML = "<strong>The Admin Department</strong><span>Keeping one's affairs in order. Or at least attempting to.</span>";
-        const originalShow = app.show;
-        app.show = function(dept) {
-          const result = originalShow.apply(this, arguments);
-          if (dept === "Today") {
-            if (!header.isConnected) main.insertBefore(header, main.firstChild);
-          } else if (header.isConnected) {
-            header.remove();
-          }
-          return result;
-        };
-        app.toggleMenu = () => {
-          app.show("Menu");
-          const title = doc.getElementById("pageTitle");
-          if (title) title.textContent = "Departments";
-          const view = doc.getElementById("view");
-          if (view && !view.querySelector(".menu-intro")) {
-            const intro = doc.createElement("p");
-            intro.className = "muted menu-intro";
-            intro.textContent = "Everything in its proper department. In theory.";
-            view.prepend(intro);
-          }
-        };
-        app.show("Today");
+        const brand = doc.createElement("section");
+        brand.id = "admin-brand-header";
+        brand.setAttribute("aria-label", "The Admin Department");
+        brand.innerHTML = '<h2 class="brand-name">The Admin Department</h2><p class="brand-line">Keeping one\'s affairs in order. Or at least attempting to.</p>';
+        const main = doc.querySelector("main");
+        const top = main && main.querySelector(".top");
+        if (main && top) main.insertBefore(brand, top);
       } catch (error) {
-        console.warn("The Admin Department could not be enhanced.", error);
+        console.warn("Could not add the dashboard heading.", error);
       }
     });
     if ("serviceWorker" in navigator) {
