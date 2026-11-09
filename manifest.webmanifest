@@ -1,7 +1,7 @@
 {
   "id": "/the-admin-department/",
   "name": "The Admin Department",
-  "short_name": "Admin Dept",
+  "short_name": "The Admin Department",
   "description": "Keeping one's affairs in order. Or at least attempting to.",
   "start_url": "/the-admin-department/",
   "scope": "/the-admin-department/",

@@ -4,10 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#49382D">
-  <meta name="description" content="The Admin Department — keeping one's affairs in order. Or at least attempting to.">
+  <meta name="description" content="The Admin Department — Keeping one's affairs in order. Or at least attempting to.">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="./icon.svg">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>The Admin Department</title>
@@ -24,20 +23,59 @@
     appFrame.addEventListener("load", () => {
       try {
         const app = appFrame.contentWindow;
+        const doc = app.document;
+        const style = doc.createElement("style");
+        style.textContent = `
+          .brand-masthead {
+            display:flex; flex-direction:column; gap:5px;
+            padding:17px 22px 15px; margin:0 0 20px;
+            background:#203B30; color:#F6F2E9;
+            border-radius:14px; border:1px solid rgba(73,56,45,.22);
+            box-shadow:0 5px 18px rgba(32,59,48,.10);
+          }
+          .brand-masthead strong {
+            font-family:"Courier New", Courier, monospace;
+            font-size:clamp(18px,3vw,25px); font-weight:700;
+            letter-spacing:.035em; line-height:1.2;
+          }
+          .brand-masthead span {
+            font-family:"Courier New", Courier, monospace;
+            font-size:11px; letter-spacing:.045em; color:#E9E3D7;
+          }
+          @media(max-width:700px) {
+            .brand-masthead { padding:15px 17px 13px; margin-bottom:16px; border-radius:12px; }
+          }
+        `;
+        doc.head.appendChild(style);
+        const main = doc.querySelector("main.main");
+        const header = doc.createElement("div");
+        header.className = "brand-masthead";
+        header.innerHTML = "<strong>The Admin Department</strong><span>Keeping one's affairs in order. Or at least attempting to.</span>";
+        const originalShow = app.show;
+        app.show = function(dept) {
+          const result = originalShow.apply(this, arguments);
+          if (dept === "Today") {
+            if (!header.isConnected) main.insertBefore(header, main.firstChild);
+          } else if (header.isConnected) {
+            header.remove();
+          }
+          return result;
+        };
         app.toggleMenu = () => {
           app.show("Menu");
-          const title = app.document.getElementById("pageTitle");
+          const title = doc.getElementById("pageTitle");
           if (title) title.textContent = "Departments";
-          const view = app.document.getElementById("view");
+          const view = doc.getElementById("view");
           if (view && !view.querySelector(".menu-intro")) {
-            const intro = app.document.createElement("p");
+            const intro = doc.createElement("p");
             intro.className = "muted menu-intro";
             intro.textContent = "Everything in its proper department. In theory.";
             view.prepend(intro);
           }
         };
+        app.show("Today");
       } catch (error) {
-        console.warn("The Admin Department menu could not be enhanced.", error);
+        console.warn("The Admin Department could not be enhanced.", error);
       }
     });
     if ("serviceWorker" in navigator) {
