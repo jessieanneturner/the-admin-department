@@ -1,20 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<rect width="512" height="512" rx="104" fill="#49382D"/>
-<g fill="none" stroke="#E9E3D7" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
-  <!-- takeaway coffee cup -->
-  <path d="M75 154h133l-12 38-12 150q-2 24-25 24h-36q-23 0-25-24l-12-150z"/>
-  <path d="M82 154q-8-10 0-19l10-8h100l10 8q8 9 0 19z"/>
-  <path d="M91 215h101M96 290h91"/>
-  <path d="M104 137q5-16 19-16h57q14 0 19 16"/>
-  <!-- diary, angled with layered pages -->
-  <path d="M232 115l166-27q19-3 23 17l36 235q3 20-17 24l-166 27q-19 3-23-17l-36-235q-3-20 17-24z" fill="#49382D"/>
-  <path d="M244 127l151-24 33 216-151 25z"/>
-  <path d="M256 349l177-29 8 21q3 10-8 13l-166 27q-13 2-15-10z"/>
-  <path d="M273 369l161-27M280 382l155-25"/>
-  <path d="M299 387l-7 43 29-28"/>
-  <!-- fountain pen -->
-  <path d="M330 445l112-105q12-11 23 1l4 5q10 12-1 23L363 480l-40 12z"/>
-  <path d="M330 445l33 35M442 340l25 29M352 423l34 35"/>
-  <path d="M323 492l-8 8 15-3z" fill="#E9E3D7"/>
-</g>
+  <rect width="512" height="512" rx="104" fill="#203B30"/>
+  <g fill="none" stroke="#E9E3D7" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="145" y="82" width="222" height="348" rx="22"/>
+    <path d="M205 84v344"/>
+  </g>
 </svg>
