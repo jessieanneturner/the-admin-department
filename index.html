@@ -40,6 +40,23 @@
           }
         };
 
+        if (!doc.getElementById("admin-compact-type")) {
+          const typeStyle = doc.createElement("style");
+          typeStyle.id = "admin-compact-type";
+          typeStyle.textContent = `
+            /* Compact typography inside the actual app iframe; leave the brand banner alone. */
+            body :is(h1,h2,h3,h4,p,span,label,button,input,textarea,select,small,strong,b,li,th,td) {
+              font-size: .90em !important;
+            }
+            body :is(.muted,.section-title,.sectionhead,.dept,.navlabel,.sidefoot,.empty,.item,.note,.routinehint) {
+              font-size: .90em !important;
+            }
+            #pageTitle { font-size: 1.35rem !important; }
+            #admin-brand-header, #admin-brand-header * { font-size: revert !important; }
+          `;
+          doc.head.appendChild(typeStyle);
+        }
+
         const main = doc.querySelector("main.main") || doc.querySelector("main");
         const top = main && main.querySelector(".top");
         if (!main || !top) return false;
