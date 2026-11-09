@@ -1,4 +1,4 @@
-const CACHE_NAME = "admin-department-v1";
+const CACHE_NAME = "admin-department-v2";
 const APP_FILES = [
   "./",
   "./index.html",

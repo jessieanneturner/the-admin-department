@@ -3,10 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#203B30">
+  <meta name="theme-color" content="#49382D">
   <meta name="description" content="The Admin Department — keeping one's affairs in order. Or at least attempting to.">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon.svg">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>The Admin Department</title>
@@ -17,8 +18,28 @@
   </style>
 </head>
 <body>
-  <iframe src="./app.html" title="The Admin Department"></iframe>
+  <iframe id="adminApp" src="./app.html" title="The Admin Department"></iframe>
   <script>
+    const appFrame = document.getElementById("adminApp");
+    appFrame.addEventListener("load", () => {
+      try {
+        const app = appFrame.contentWindow;
+        app.toggleMenu = () => {
+          app.show("Menu");
+          const title = app.document.getElementById("pageTitle");
+          if (title) title.textContent = "Departments";
+          const view = app.document.getElementById("view");
+          if (view && !view.querySelector(".menu-intro")) {
+            const intro = app.document.createElement("p");
+            intro.className = "muted menu-intro";
+            intro.textContent = "Everything in its proper department. In theory.";
+            view.prepend(intro);
+          }
+        };
+      } catch (error) {
+        console.warn("The Admin Department menu could not be enhanced.", error);
+      }
+    });
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("./service-worker.js").catch(() => {});
