@@ -87,14 +87,18 @@
         return false;
       }
     }
-    frame.addEventListener("load", () => {
+    function retryEnhancement() {
       let attempts = 0;
       const retry = () => {
-        if (enhanceAdminApp() || attempts++ > 30) return;
+        if (enhanceAdminApp() || attempts++ > 60) return;
         setTimeout(retry, 150);
       };
       retry();
-    });
+    }
+    // The iframe can finish loading before this script attaches its listener.
+    // Try immediately as well as on load, so neither timing is missed.
+    frame.addEventListener("load", retryEnhancement);
+    retryEnhancement();
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("./service-worker.js").catch(() => {});
