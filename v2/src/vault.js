@@ -9,9 +9,14 @@ export function createVaultManager({ storage }) {
   if (!storage) throw new TypeError("A vault storage adapter is required.");
   let key = null;
   let state = "locked";
+  let session = 0;
 
   function requireUnlocked() {
     if (state !== "unlocked" || !key) throw new Error("Unlock the T.A.D. vault before accessing private records.");
+    return { key, session };
+  }
+  function ensureSession(expected) {
+    if (state !== "unlocked" || session !== expected) throw new Error("The T.A.D. vault was locked during this operation.");
   }
   async function descriptorOrThrow() {
     const descriptor = await storage.readDescriptor();
@@ -27,6 +32,7 @@ export function createVaultManager({ storage }) {
       try {
         await storage.writeDescriptor(created.descriptor);
         key = created.key;
+        session += 1;
         state = "unlocked";
         return { recoveryKey: created.recoveryKey };
       } catch (error) {
@@ -39,6 +45,7 @@ export function createVaultManager({ storage }) {
       const descriptor = await descriptorOrThrow();
       const unlockedKey = await unlockVault(passphrase, descriptor);
       key = unlockedKey;
+      session += 1;
       state = "unlocked";
       return true;
     },
@@ -46,35 +53,49 @@ export function createVaultManager({ storage }) {
       const descriptor = await descriptorOrThrow();
       const unlockedKey = await unlockVaultWithRecoveryKey(recoveryKey, descriptor);
       key = unlockedKey;
+      session += 1;
       state = "unlocked";
       return true;
     },
     lock() {
+      session += 1;
       key = null;
       state = "locked";
     },
     async save(id, value) {
-      requireUnlocked();
       if (typeof id !== "string" || !id.trim()) throw new TypeError("A non-empty record ID is required.");
-      const encrypted = await encryptRecord(key, id, value);
+      const current = requireUnlocked();
+      const encrypted = await encryptRecord(current.key, id, value);
+      ensureSession(current.session);
       await storage.putRecord(encrypted);
+      ensureSession(current.session);
       return id;
     },
     async get(id) {
-      requireUnlocked();
+      const current = requireUnlocked();
       const encrypted = await storage.getRecord(id);
-      return encrypted ? decryptRecord(key, encrypted) : null;
+      ensureSession(current.session);
+      if (!encrypted) return null;
+      const value = await decryptRecord(current.key, encrypted);
+      ensureSession(current.session);
+      return value;
     },
     async list() {
-      requireUnlocked();
+      const current = requireUnlocked();
       const encryptedRecords = await storage.listRecords();
+      ensureSession(current.session);
       const values = [];
-      for (const record of encryptedRecords) values.push({ id: record.id, value: await decryptRecord(key, record) });
+      for (const record of encryptedRecords) {
+        const value = await decryptRecord(current.key, record);
+        ensureSession(current.session);
+        values.push({ id: record.id, value });
+      }
       return values;
     },
     async remove(id) {
-      requireUnlocked();
+      const current = requireUnlocked();
       await storage.deleteRecord(id);
+      ensureSession(current.session);
     }
   });
 }
