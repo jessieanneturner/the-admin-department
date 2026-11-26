@@ -1,7 +1,5 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { webcrypto } from "node:crypto";
-globalThis.crypto = webcrypto;
 import { createVault, unlockVault, unlockVaultWithRecoveryKey, encryptRecord, decryptRecord } from "../crypto.js";
 
 test("vault encrypts records and unlocks with passphrase and independent recovery key", async () => {
