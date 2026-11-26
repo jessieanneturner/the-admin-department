@@ -178,3 +178,15 @@ The following is the proposed design direction. It must be proven with working p
 
 - V2 development branch created from `main`.
 - This document records the agreed scope; it does not mean the features above are implemented.
+
+
+### Engineering progress — 2026-11-26 (security foundation milestone 1)
+
+Added an isolated proof-of-concept under `v2/src/`:
+- `crypto.js`: Web Crypto AES-256-GCM record encryption; random 256-bit data key; PBKDF2-HMAC-SHA-256 passphrase wrapping (600,000 iterations); independent random 256-bit offline recovery-key wrapping; record IDs authenticated as additional data.
+- `encrypted-store.js`: IndexedDB adapter that accepts encrypted record envelopes only. It does not accept plaintext records and is not a sync or backup service.
+- `tests/crypto.test.js` and `package.json`: automated tests for encrypt/decrypt, both unlock paths, short passphrase rejection and tamper detection.
+- `SECURITY-FOUNDATION.md`: implementation notes, limitations and next security gates.
+- `.github/workflows/v2-security-tests.yml`: CI workflow definition for the tests.
+
+This is a **proof of concept only**. It is not integrated into the V2 interface and is not ready for personal data. No login/account service, biometric/PIN integration, key lifecycle UI, sync, Google Drive backup, restore, or device revocation has been implemented. Automated test execution and target-device testing remain verification gates; no successful CI run is claimed yet. Production `main` and the live app remain untouched.
