@@ -103,7 +103,7 @@ The following is the proposed design direction. It must be proven with working p
 - **Sync is not backup:** phone/desktop synchronisation needs authenticated access, encrypted transport and conflict handling. A sync mistake must not silently erase the last good backup.
 - **Privacy defaults:** diary entries, private notes and reading reflections stay private by default; exclude their contents from notifications, widgets, logs, diagnostics and analytics. Search results must respect the same access rules.
 - **Automatic backup controls:** allow the user to enable/disable automatic backups, see the last successful backup, retry failures and run a manual backup/restore. Do not claim a backup exists until upload and integrity verification succeed.
-- **Architecture candidate:** evaluate a shared web application with a native Android wrapper for Android-specific security and device features, while retaining a desktop browser version. This is a candidate to test, not a final architecture decision. Build a small proof-of-concept for biometric-gated key access, encrypted local storage, visible-folder Drive backup/restore and desktop access before committing to the full build.
+- **Agreed delivery architecture (user approved 2026-11-26):** one shared application/codebase and account/data model, packaged for Android with **Capacitor** so Android can use native system biometrics and Android Keystore, and delivered on Windows as an installable **Progressive Web App (PWA)** through a supported browser. Both clients use the same authenticated, encrypted sync service and data model; they are not separate apps or separate datasets. Validate platform support with small security proof-of-concepts before relying on any API. Keep a future Windows desktop wrapper as an option only if PWA capabilities prove insufficient; do not introduce a second codebase.
 
 ## Development sequence
 
@@ -113,12 +113,30 @@ The following is the proposed design direction. It must be proven with working p
 - Confirm the current app's existing features/data model before replacing anything.
 - Use this document as the agreed scope and update it only when the user approves a change.
 
-### Phase 1 — architecture and security foundation
-- Choose the delivery architecture that can genuinely support Android biometrics, encrypted local data, Google Drive backups, reliable notifications and desktop access.
-- Define data schema, encryption/key management, backup format, sync/conflict strategy and migration plan.
-- Build security and recovery proof-of-concepts before entering personal data.
+### Phase 1 — architecture and security foundation (start immediately)
+- Implement the agreed shared-codebase architecture: Capacitor Android client and installable Windows PWA.
+- Define and prove the account/authentication model, data schema, encryption/key hierarchy, secure local storage per platform, backup format, encrypted sync/conflict strategy and migration plan.
+- Prove Android biometric-gated key access/Keystore, Windows browser/passkey capabilities, email-assisted account recovery that cannot decrypt data by itself, offline recovery-key flow, and encrypted Google Drive backup/restore.
+- Keep all real personal data out until the security gates pass.
 
-### Phase 2 — complete app shell and departments
+### Phase 2 — working application (build alongside the foundation where safe)
+- Replace prototype-only interactions with real create, view, edit, complete, archive, restore and delete workflows.
+- Implement the agreed departments and shared calendar, Quick Add, search, recurrence, Pinboard/Moodboard, travel packing, reading journal and savings features.
+- Use a documented local data layer and test fixtures until the secure storage boundary is ready; never present prototype/demo storage as private or production-ready.
+- Prioritise a usable core first: Today, Calendar, Tasks & Reminders, Notes & Diary, Personal Life, Pinboard and Settings; then complete the remaining agreed departments and workflows.
+
+### Phase 3 — device clients, sync and release hardening
+- Package and test the Android client; installable Windows PWA; verify sign-in, lock behaviour, offline use, notifications and device-specific security.
+- Complete encrypted multi-device sync, conflict resolution, Google Drive backup/restore, device revocation and recovery.
+- Run privacy, security, data-integrity and usability tests on the user's Samsung Android device and Windows laptop.
+
+### Phase 4 — user acceptance and safe migration
+- Demonstrate the working app and provide installation steps/builds.
+- Test restore, lost-device recovery, offline operation, conflicts, recurring dates, notifications and privacy defaults.
+- Rehearse V1 data import without changing V1; obtain explicit user approval before any migration or production release.
+
+### Phase 5 — ongoing refinement
+- Adjust departments, appearance and workflows from real use without compromising privacy or data integrity.
 - Build the full navigation, design system, responsive phone/desktop layout and all department views.
 - Implement core data models and CRUD flows, archive/recycle bin, search, Quick Add and export.
 - Add the Reading Journal, Personal Shopping improvements, Travel structure and Pinboard.
