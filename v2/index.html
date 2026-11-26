@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#263f33">
+  <meta name="description" content="T.A.D. — a calm place to keep life's little details in order.">
+  <title>T.A.D. · The Admin Department</title>
+  <style>
+    :root{color-scheme:light;--forest:#263f33;--forest-2:#385342;--sage:#a5ad99;--paper:#f6f3ec;--cream:#ebe5d9;--white:#fffefa;--ink:#302d28;--muted:#77736a;--line:#e4ded2;--brown:#725c4c;--rose:#b99b91;--shadow:0 12px 35px #302d2810;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);min-height:100vh}button{font:inherit;cursor:pointer}.shell{min-height:100vh;display:grid;grid-template-columns:248px minmax(0,1fr)}.sidebar{background:var(--forest);color:#f7f4ed;padding:28px 18px;display:flex;flex-direction:column;gap:28px}.brand{padding:4px 12px 20px;border-bottom:1px solid #ffffff25}.brand-mark{width:35px;height:42px;border:1.6px solid #e8e3d8;border-radius:5px;margin-bottom:15px;position:relative}.brand-mark:before{content:"";position:absolute;left:8px;top:8px;bottom:8px;border-left:1px solid #e8e3d8}.brand-name{font-family:Georgia,serif;font-size:25px;letter-spacing:.04em}.brand-sub{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#c9d0c5;margin-top:5px}.nav-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#bdc7bb;padding:0 12px 9px}.nav{display:grid;gap:4px}.nav button{border:0;background:transparent;color:#e8e9e1;text-align:left;padding:11px 12px;border-radius:9px;font-size:13px;display:flex;align-items:center;gap:12px}.nav button:hover,.nav button.active{background:#ffffff18;color:#fff}.nav .nav-icon{width:18px;text-align:center;color:#cbd2c5;font-size:14px}.sidebar-foot{margin-top:auto;padding:14px 12px 0;border-top:1px solid #ffffff25;color:#cbd2c5;font-size:11px;line-height:1.6}.main{min-width:0}.topbar{height:72px;padding:0 clamp(20px,4vw,54px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:#f6f3eccf;backdrop-filter:blur(12px)}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:var(--muted)}.top-title{font-family:Georgia,serif;font-size:19px;margin-top:3px}.top-actions{display:flex;gap:9px;align-items:center}.quiet-btn,.primary-btn{border-radius:999px;padding:10px 15px;font-size:12px}.quiet-btn{background:transparent;border:1px solid var(--line);color:var(--ink)}.primary-btn{background:var(--forest);color:white;border:1px solid var(--forest)}.content{max-width:1160px;margin:0 auto;padding:clamp(24px,4vw,52px)}.welcome{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:30px}.welcome h1{font-family:Georgia,serif;font-weight:400;font-size:clamp(30px,4vw,43px);margin:7px 0 8px;letter-spacing:-.025em}.welcome p{color:var(--muted);margin:0;font-size:13px}.date-chip{background:var(--cream);padding:11px 15px;border-radius:999px;color:var(--brown);font-size:11px;white-space:nowrap}.grid{display:grid;grid-template-columns:1.35fr 1fr;gap:18px}.panel{background:var(--white);border:1px solid var(--line);border-radius:15px;padding:22px;box-shadow:var(--shadow)}.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.panel h2{font:400 21px Georgia,serif;margin:0}.panel-kicker{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}.empty{padding:24px 10px;text-align:center;color:var(--muted);font-size:12px;line-height:1.7}.empty strong{display:block;color:var(--brown);font:400 18px Georgia,serif;margin-bottom:5px}.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.quick{border:1px solid var(--line);background:#fffefa;border-radius:11px;padding:14px;text-align:left;color:var(--ink);min-height:88px}.quick:hover{border-color:var(--sage);background:#faf9f4}.quick .qicon{display:block;color:var(--brown);font-size:17px;margin-bottom:9px}.quick span:last-child{font-size:12px}.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}.stat{background:var(--cream);border-radius:12px;padding:15px}.stat strong{font:400 25px Georgia,serif;display:block;color:var(--forest)}.stat span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}.section-intro{color:var(--muted);font-size:13px;line-height:1.6;margin:9px 0 22px}.department-list{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.department{background:var(--white);border:1px solid var(--line);border-radius:13px;padding:17px;text-align:left;min-height:112px;transition:.15s}.department:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--sage)}.department .d-icon{font-size:17px;color:var(--brown);display:block;margin-bottom:12px}.department strong{display:block;font:400 17px Georgia,serif}.department small{display:block;color:var(--muted);font-size:10px;margin-top:5px}.mobile-head{display:none}.notice{background:#f0ece3;border:1px solid #e4ded2;padding:13px 15px;border-radius:10px;color:#6e6256;font-size:11px;line-height:1.5;margin-top:18px}
+    @media(max-width:800px){.shell{grid-template-columns:1fr}.sidebar{display:none}.mobile-head{display:flex;align-items:center;justify-content:space-between;padding:15px 20px;background:var(--forest);color:white}.mobile-brand{font:22px Georgia,serif}.mobile-menu{border:1px solid #ffffff55;background:transparent;color:white;border-radius:8px;padding:7px 11px}.topbar{height:60px;padding:0 20px}.grid{grid-template-columns:1fr}.content{padding:25px 18px 40px}.welcome{align-items:start;flex-direction:column}.department-list{grid-template-columns:repeat(2,1fr)}.quick-grid{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:420px){.quick-grid{grid-template-columns:repeat(2,1fr)}.stat-row{gap:7px}.stat{padding:12px}.stat strong{font-size:21px}}
+  </style>
+</head>
+<body>
+  <div class="mobile-head"><div class="mobile-brand">T.A.D.</div><button class="mobile-menu" id="mobileMenu" aria-expanded="false">Departments</button></div>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark" aria-hidden="true"></div><div class="brand-name">T.A.D.</div><div class="brand-sub">The Admin Department</div></div>
+      <div><div class="nav-label">Your space</div><nav class="nav" id="navigation" aria-label="Main navigation"></nav></div>
+      <div class="sidebar-foot">A little more organised.<br>A little less overwhelmed.</div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><div><div class="eyebrow">The Admin Department</div><div class="top-title" id="topTitle">Today</div></div><div class="top-actions"><button class="quiet-btn" id="searchButton">Search</button><button class="primary-btn" id="quickAdd">＋ Quick add</button></div></header>
+      <section class="content" id="view" aria-live="polite"></section>
+    </main>
+  </div>
+  <script>
+    const departments=[
+      ["Today","⌂","A gentle overview of what needs your attention."],
+      ["Calendar","▦","Appointments, birthdays and dates to remember."],
+      ["Tasks & Reminders","✓","The little jobs, all in one place."],
+      ["Routines","↻","Recurring jobs that keep life ticking along."],
+      ["Habits","✳","Small habits and the progress you make."],
+      ["Notes & Diary","▤","A place to capture thoughts and keep private entries."],
+      ["Reading Journal","⌑","Reading notes, passages and reflections."],
+      ["Travel","⌁","Trips, packing lists and outfit plans."],
+      ["Personal Life","♡","People, projects, hobbies and personal plans."],
+      ["Personal Shopping","◇","Your wishlist and things you've bought."],
+      ["Savings","＄","One clear picture of your savings."],
+      ["Archive & Recycle Bin","▧","Put away, restore or permanently remove items."],
+      ["Settings","⚙","Privacy, backups, sync and preferences."]
+    ];
+    let current="Today";
+    const nav=document.getElementById("navigation"),view=document.getElementById("view"),topTitle=document.getElementById("topTitle");
+    function go(name){current=name;topTitle.textContent=name;renderNav();renderView();document.getElementById("mobileMenu").setAttribute("aria-expanded","false");}
+    function renderNav(){nav.innerHTML=departments.map(([name,icon])=>'<button class="'+(name===current?'active':'')+'" data-page="'+name+'"><span class="nav-icon">'+icon+'</span>'+name+'</button>').join("");}
+    function renderView(){
+      if(current==="Today"){view.innerHTML=`
+        <div class="welcome"><div><div class="eyebrow">A fresh page</div><h1>Make room for your day.</h1><p>Your plans, little reminders and everyday admin, in one calm place.</p></div><div class="date-chip" id="todayDate"></div></div>
+        <div class="stat-row"><div class="stat"><strong>—</strong><span>Appointments</span></div><div class="stat"><strong>—</strong><span>Tasks due</span></div><div class="stat"><strong>—</strong><span>Reminders</span></div></div>
+        <div class="grid"><section class="panel"><div class="panel-head"><h2>Coming up</h2><span class="panel-kicker">Your calendar</span></div><div class="empty"><strong>Nothing on the agenda just yet</strong>Your upcoming appointments will appear here.</div></section>
+        <section class="panel"><div class="panel-head"><h2>Quick capture</h2><span class="panel-kicker">Get it out of your head</span></div><div class="quick-grid"><button class="quick" data-add="Task"><span class="qicon">✓</span><span>Task</span></button><button class="quick" data-add="Appointment"><span class="qicon">▦</span><span>Appointment</span></button><button class="quick" data-add="Reminder"><span class="qicon">◷</span><span>Reminder</span></button><button class="quick" data-add="Note"><span class="qicon">▤</span><span>Note</span></button><button class="quick" data-add="Diary entry"><span class="qicon">♡</span><span>Diary entry</span></button><button class="quick" data-add="Reading entry"><span class="qicon">⌑</span><span>Reading entry</span></button></div></section></div>
+        <div class="notice"><strong>V2 foundation preview.</strong> This is a design and navigation scaffold only. Personal data storage, sign-in, encryption, backups and sync are deliberately not enabled yet.</div>`;
+        document.getElementById("todayDate").textContent=new Intl.DateTimeFormat("en-GB",{weekday:"long",day:"numeric",month:"long"}).format(new Date());
+      }else if(current==="Settings"){view.innerHTML='<div class="welcome"><div><div class="eyebrow">Your preferences</div><h1>Settings</h1><p>Privacy and reliability will be built before personal data is added.</p></div></div><div class="panel"><h2>Security foundation</h2><p class="section-intro">Authentication, encrypted local storage, recovery, Google Drive backups and secure sync are planned release requirements. None are switched on in this preview.</p><div class="notice">Do not enter personal or sensitive information into this prototype.</div></div>';}
+      else{const d=departments.find(x=>x[0]===current);view.innerHTML='<div class="welcome"><div><div class="eyebrow">Your departments</div><h1>'+current+'</h1><p>'+d[2]+'</p></div></div><div class="panel"><div class="empty"><strong>'+current+' is being prepared</strong>This department will be connected to the secure data layer before it is ready for real use.</div></div>';}
+    }
+    nav.addEventListener("click",e=>{const b=e.target.closest("[data-page]");if(b)go(b.dataset.page)});
+    view.addEventListener("click",e=>{const b=e.target.closest("[data-add]");if(b)alert(b.dataset.add+" capture will be connected after the secure data foundation is in place.")});
+    document.getElementById("quickAdd").addEventListener("click",()=>alert("Quick Add will be connected after the secure data foundation is in place."));
+    document.getElementById("searchButton").addEventListener("click",()=>alert("Search will be connected after the secure data foundation is in place."));
+    document.getElementById("mobileMenu").addEventListener("click",()=>{const menu=document.querySelector(".sidebar");menu.style.display=menu.style.display==="flex"?"none":"flex";menu.style.position="absolute";menu.style.zIndex="5";menu.style.width="min(290px,85vw)";menu.style.minHeight="calc(100vh - 54px)";});
+    renderNav();renderView();
+  </script>
+</body>
+</html>
