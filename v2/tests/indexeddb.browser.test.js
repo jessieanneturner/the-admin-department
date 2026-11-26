@@ -200,3 +200,110 @@ test("real Chromium persists concurrent record writes and rejects uncloneable va
     await new Promise(resolveClose => server.close(resolveClose));
   }
 });
+
+
+test("real Chromium retries IndexedDB after a failed open instead of caching the failure", async () => {
+  const { server, url } = await startServer();
+  let browser;
+  try {
+    browser = await chromium.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.goto(url + "/v2/");
+    const result = await page.evaluate(async () => {
+      const { createIndexedDbStorage } = await import("/v2/src/storage.js");
+      const dbName = "tad-browser-retry-" + crypto.randomUUID();
+      const upgrade = indexedDB.open(dbName, 2);
+      await new Promise((resolve, reject) => {
+        upgrade.onupgradeneeded = () => upgrade.result.createObjectStore("future-store");
+        upgrade.onsuccess = resolve;
+        upgrade.onerror = () => reject(upgrade.error);
+      });
+      upgrade.result.close();
+
+      const storage = createIndexedDbStorage({ name: dbName });
+      let firstOpenRejected = false;
+      try { await storage.readDescriptor(); } catch { firstOpenRejected = true; }
+
+      const deletion = indexedDB.deleteDatabase(dbName);
+      await new Promise((resolve, reject) => {
+        deletion.onsuccess = resolve;
+        deletion.onerror = () => reject(deletion.error);
+        deletion.onblocked = () => reject(new Error("Database deletion unexpectedly blocked."));
+      });
+      const secondOpenResult = await storage.readDescriptor();
+      await storage.close();
+      indexedDB.deleteDatabase(dbName);
+      return { firstOpenRejected, secondOpenResult: secondOpenResult ?? null };
+    });
+    assert.equal(result.firstOpenRejected, true, "a schema-version mismatch must reject the first open");
+    assert.equal(result.secondOpenResult, null, "the same adapter must recover after the failed database is removed");
+  } finally {
+    if (browser) await browser.close();
+    await new Promise(resolveClose => server.close(resolveClose));
+  }
+});
+
+test("real Chromium refuses to overwrite an existing vault descriptor", async () => {
+  const { server, url } = await startServer();
+  let browser;
+  try {
+    browser = await chromium.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.goto(url + "/v2/");
+    const result = await page.evaluate(async () => {
+      const { createIndexedDbStorage } = await import("/v2/src/storage.js");
+      const dbName = "tad-browser-descriptor-" + crypto.randomUUID();
+      const storage = createIndexedDbStorage({ name: dbName });
+      const original = { version: 1, wrappedKey: "original-descriptor" };
+      await storage.writeDescriptor(original);
+      let overwriteRejected = false;
+      try { await storage.writeDescriptor({ version: 1, wrappedKey: "replacement-descriptor" }); }
+      catch { overwriteRejected = true; }
+      const retained = await storage.readDescriptor();
+      await storage.close();
+      indexedDB.deleteDatabase(dbName);
+      return { overwriteRejected, retained };
+    });
+    assert.equal(result.overwriteRejected, true, "a second descriptor write must be refused");
+    assert.deepEqual(result.retained, { version: 1, wrappedKey: "original-descriptor" });
+  } finally {
+    if (browser) await browser.close();
+    await new Promise(resolveClose => server.close(resolveClose));
+  }
+});
+
+test("real Chromium reports unavailable IndexedDB without falling back to plaintext storage", async () => {
+  const { server, url } = await startServer();
+  let browser;
+  try {
+    browser = await chromium.launch({ headless: true });
+    const context = await browser.newContext();
+    await context.addInitScript(() => {
+      Object.defineProperty(globalThis, "indexedDB", { configurable: true, value: undefined });
+    });
+    const page = await context.newPage();
+    await page.goto(url + "/v2/");
+    const result = await page.evaluate(async () => {
+      const { createIndexedDbStorage } = await import("/v2/src/storage.js");
+      const storage = createIndexedDbStorage({ name: "tad-browser-no-idb-" + crypto.randomUUID() });
+      let rejected = false;
+      let message = "";
+      try { await storage.readDescriptor(); }
+      catch (error) { rejected = true; message = error.message; }
+      return {
+        rejected,
+        message,
+        localStorageKeys: Object.keys(localStorage),
+        sessionStorageKeys: Object.keys(sessionStorage)
+      };
+    });
+    assert.equal(result.rejected, true, "storage operations must fail when IndexedDB is unavailable");
+    assert.match(result.message, /IndexedDB is unavailable/);
+    assert.deepEqual(result.localStorageKeys, [], "there must be no localStorage plaintext fallback");
+    assert.deepEqual(result.sessionStorageKeys, [], "there must be no sessionStorage plaintext fallback");
+    await context.close();
+  } finally {
+    if (browser) await browser.close();
+    await new Promise(resolveClose => server.close(resolveClose));
+  }
+});
