@@ -102,3 +102,101 @@ test("real Chromium IndexedDB vault persistence, encryption and recovery", async
     await new Promise(resolveClose => server.close(resolveClose));
   }
 });
+
+
+test("real Chromium rejects duplicate vault creation, wrong keys and corrupted records", async () => {
+  const { server, url } = await startServer();
+  let browser;
+  try {
+    browser = await chromium.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.goto(url + "/v2/");
+    const result = await page.evaluate(async () => {
+      const { createIndexedDbStorage } = await import("/v2/src/storage.js");
+      const { createVaultManager } = await import("/v2/src/vault.js");
+      const dbName = "tad-browser-negative-" + crypto.randomUUID();
+      const passphrase = "Negative-test-long-passphrase-2026!";
+      const storage = createIndexedDbStorage({ name: dbName });
+      const manager = createVaultManager({ storage });
+      const { recoveryKey } = await manager.initialise(passphrase);
+
+      let duplicateInitialisationRejected = false;
+      try { await manager.initialise(passphrase); } catch { duplicateInitialisationRejected = true; }
+      manager.lock();
+
+      let wrongPassphraseRejected = false;
+      try { await manager.unlock("Not-the-right-passphrase-123!"); } catch { wrongPassphraseRejected = true; }
+      const remainsLockedAfterWrongPassphrase = manager.state === "locked";
+
+      await manager.unlockWithRecoveryKey(recoveryKey);
+      await manager.save("tamper-check", { text: "integrity protected" });
+      const envelope = await storage.getRecord("tamper-check");
+      envelope.ciphertext = envelope.ciphertext.slice(0, -4) + "AAAA";
+      await storage.putRecord(envelope);
+      let tamperingRejected = false;
+      try { await manager.get("tamper-check"); } catch { tamperingRejected = true; }
+
+      await storage.close();
+      indexedDB.deleteDatabase(dbName);
+      return {
+        duplicateInitialisationRejected,
+        wrongPassphraseRejected,
+        remainsLockedAfterWrongPassphrase,
+        tamperingRejected
+      };
+    });
+    assert.equal(result.duplicateInitialisationRejected, true, "an existing vault must never be overwritten");
+    assert.equal(result.wrongPassphraseRejected, true, "a wrong passphrase must fail");
+    assert.equal(result.remainsLockedAfterWrongPassphrase, true, "a failed unlock must leave the vault locked");
+    assert.equal(result.tamperingRejected, true, "modified ciphertext must fail authenticated decryption");
+  } finally {
+    if (browser) await browser.close();
+    await new Promise(resolveClose => server.close(resolveClose));
+  }
+});
+
+test("real Chromium persists concurrent record writes and rejects uncloneable values safely", async () => {
+  const { server, url } = await startServer();
+  let browser;
+  try {
+    browser = await chromium.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.goto(url + "/v2/");
+    const result = await page.evaluate(async () => {
+      const { createIndexedDbStorage } = await import("/v2/src/storage.js");
+      const { createVaultManager } = await import("/v2/src/vault.js");
+      const dbName = "tad-browser-concurrency-" + crypto.randomUUID();
+      const storage = createIndexedDbStorage({ name: dbName });
+      const manager = createVaultManager({ storage });
+      await manager.initialise("Concurrent-test-long-passphrase-2026!");
+      await Promise.all(Array.from({ length: 12 }, (_, index) =>
+        manager.save("record-" + index, { index, value: "parallel write" })
+      ));
+      const records = await manager.list();
+      let uncloneableValueRejected = false;
+      try { await storage.putRecord({ id: "invalid", value: () => "not cloneable" }); }
+      catch { uncloneableValueRejected = true; }
+      const savedCountAfterInvalidWrite = (await manager.list()).length;
+      const reopenedStorage = createIndexedDbStorage({ name: dbName });
+      const reopened = createVaultManager({ storage: reopenedStorage });
+      await reopened.unlock("Concurrent-test-long-passphrase-2026!");
+      const reopenedCount = (await reopened.list()).length;
+      await storage.close();
+      await reopenedStorage.close();
+      indexedDB.deleteDatabase(dbName);
+      return {
+        ids: records.map(record => record.id).sort(),
+        uncloneableValueRejected,
+        savedCountAfterInvalidWrite,
+        reopenedCount
+      };
+    });
+    assert.deepEqual(result.ids, Array.from({ length: 12 }, (_, index) => "record-" + index));
+    assert.equal(result.uncloneableValueRejected, true, "IndexedDB must reject values it cannot safely clone");
+    assert.equal(result.savedCountAfterInvalidWrite, 12, "a failed write must not corrupt existing records");
+    assert.equal(result.reopenedCount, 12, "all concurrent successful writes must persist");
+  } finally {
+    if (browser) await browser.close();
+    await new Promise(resolveClose => server.close(resolveClose));
+  }
+});
