@@ -197,3 +197,14 @@ Verification update — 2026-11-26:
 - The GitHub Actions workflow file is committed, but GitHub has not reported a workflow run yet; CI is therefore still unverified.
 
 - CI follow-up: corrected the test import path after the first two workflow runs exposed harness issues. GitHub Actions run [45888108610](https://github.com/jessieanneturner/the-admin-department/actions/runs/45888108610) completed successfully on commit `d2a9c41a1adf067dfc5c0f9a299195e35d0cdfa8`; all three cryptographic tests passed.
+
+
+### Engineering progress — 2026-11-26 (vault lifecycle milestone)
+
+Added the next isolated data-layer pieces on `v2-development`:
+- `v2/src/storage.js`: IndexedDB adapter with a vault metadata store and encrypted-record store; no plaintext/localStorage fallback.
+- `v2/src/vault.js`: vault initialisation, passphrase unlock, offline recovery-key unlock, in-memory lock state and encrypted record CRUD.
+- `v2/tests/vault.test.js`: tests for locked-state access control, encrypted persistence, lock/unlock, recovery unlock, duplicate initialisation, list and delete.
+- Updated `v2/SECURITY-FOUNDATION.md` with actual scope and remaining gates.
+
+These changes are committed but the CI run for the new tests has not yet been checked, and IndexedDB browser/device behaviour is not yet verified. This remains an isolated proof of concept and is not connected to the app UI or suitable for personal data. No account system, biometrics, sync or Google Drive backups are implemented. `main` remains untouched.
