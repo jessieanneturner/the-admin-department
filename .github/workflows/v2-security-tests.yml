@@ -1,0 +1,25 @@
+name: V2 security foundation tests
+
+on:
+  push:
+    branches:
+      - v2-development
+    paths:
+      - "v2/**"
+      - ".github/workflows/v2-security-tests.yml"
+  pull_request:
+    paths:
+      - "v2/**"
+      - ".github/workflows/v2-security-tests.yml"
+
+jobs:
+  crypto-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run V2 security module tests
+        working-directory: v2
+        run: npm test
