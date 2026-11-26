@@ -13,13 +13,19 @@ on:
       - ".github/workflows/v2-security-tests.yml"
 
 jobs:
-  crypto-tests:
+  crypto-and-browser-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Run V2 security module tests
+      - name: Install test dependencies
+        working-directory: v2
+        run: npm install --no-audit --no-fund
+      - name: Install Chromium for real-browser tests
+        working-directory: v2
+        run: npx playwright install --with-deps chromium
+      - name: Run V2 security and IndexedDB browser tests
         working-directory: v2
         run: npm test
