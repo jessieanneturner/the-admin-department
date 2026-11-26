@@ -74,6 +74,22 @@ V2 is not ready for personal use until these are implemented and tested:
 7. Privacy review: widgets, notifications, logs, analytics and error messages must not leak private content.
 8. Platform review: verify actual Android/browser support for biometrics, background notifications and scheduling. If reliable behaviour requires a native Android wrapper, implement and test that rather than claiming a PWA can do it.
 
+## Privacy and backup design — decisions to validate before implementation
+
+The following is the proposed design direction. It must be proven with working prototypes and reviewed before it is treated as secure or used for personal data.
+
+- **Separate the security jobs:** biometric authentication controls convenient access; the app PIN is a fallback access check; encryption protects stored data; recovery material restores access if a device is lost. None should be casually substituted for another.
+- **Android access:** investigate a native Android container (for example, Capacitor) so the app can use Android's system biometric prompt and Android Keystore. The fingerprint itself is never stored by T.A.D. The operating system confirms authentication.
+- **Four-digit PIN:** retain as a user-friendly fallback only if it can be implemented with secure attempt limits, delay/lockout and safe verification. It must not be used directly as the data-encryption key or as the sole protection for a cloud backup.
+- **Encryption and key handling:** encrypt sensitive records and attachments before they leave the device. Use established, authenticated encryption and a documented key hierarchy. Keep key material out of ordinary app storage and away from encrypted data. Review desktop/browser key storage separately from Android; do not assume browser storage has Android Keystore protections.
+- **Recovery:** create a separate high-entropy recovery key or passphrase, shown clearly once and with a safe way for the user to store it offline. Explain that losing both device access and recovery material may make encrypted data impossible to recover. Never send the recovery secret to Google Drive alongside the backup.
+- **Google Drive backups:** use the user's visible T.A.D. Backups folder, not the hidden Drive appDataFolder. Upload only encrypted backup packages. Request the minimum Drive permission needed to create and manage T.A.D.'s own backup files. Keep the latest five successful, integrity-checked backups; show date, size and status; verify before marking a backup complete; test restore from an actual downloaded backup.
+- **Backup PIN clarification:** a four-digit PIN may be used to unlock the app, but it is not strong enough to protect an exported backup by itself. Backup encryption must use the recovery/key design above.
+- **Sync is not backup:** phone/desktop synchronisation needs authenticated access, encrypted transport and conflict handling. A sync mistake must not silently erase the last good backup.
+- **Privacy defaults:** diary entries, private notes and reading reflections stay private by default; exclude their contents from notifications, widgets, logs, diagnostics and analytics. Search results must respect the same access rules.
+- **Automatic backup controls:** allow the user to enable/disable automatic backups, see the last successful backup, retry failures and run a manual backup/restore. Do not claim a backup exists until upload and integrity verification succeed.
+- **Architecture candidate:** evaluate a shared web application with a native Android wrapper for Android-specific security and device features, while retaining a desktop browser version. This is a candidate to test, not a final architecture decision. Build a small proof-of-concept for biometric-gated key access, encrypted local storage, visible-folder Drive backup/restore and desktop access before committing to the full build.
+
 ## Development sequence
 
 ### Phase 0 — protect and specify
