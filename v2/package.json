@@ -1,0 +1,8 @@
+{
+  "name": "tad-v2-security-foundation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
