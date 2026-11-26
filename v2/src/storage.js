@@ -20,13 +20,14 @@ function transactionDone(transaction) {
   });
 }
 
-export function createIndexedDbStorage({ name = "tad-v2-private-vault" } = {}) {
+export function createIndexedDbStorage({ name = "tad-v2-private-vault", version = DB_VERSION } = {}) {
+  if (!Number.isSafeInteger(version) || version < 1) throw new TypeError("A positive IndexedDB version is required.");
   let databasePromise;
   function open() {
     if (!globalThis.indexedDB) throw new Error("IndexedDB is unavailable in this browser.");
     if (!databasePromise) {
       databasePromise = new Promise((resolve, reject) => {
-        const request = indexedDB.open(name, DB_VERSION);
+        const request = indexedDB.open(name, version);
         request.onupgradeneeded = () => {
           const db = request.result;
           if (!db.objectStoreNames.contains(META_STORE)) db.createObjectStore(META_STORE);
