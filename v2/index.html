@@ -3,7 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#263f33">
+  <meta name="theme-color" content="#203B30">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon-tad.svg" type="image/svg+xml">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="T.A.D.">
   <meta name="description" content="T.A.D. — a calm place to keep life's little details in order.">
   <title>T.A.D. · The Admin Department</title>
   <style>
@@ -74,6 +78,7 @@
     document.getElementById("searchButton").addEventListener("click",()=>alert("Search will be connected after the secure data foundation is in place."));
     document.getElementById("mobileMenu").addEventListener("click",()=>{const menu=document.querySelector(".sidebar");menu.style.display=menu.style.display==="flex"?"none":"flex";menu.style.position="absolute";menu.style.zIndex="5";menu.style.width="min(290px,85vw)";menu.style.minHeight="calc(100vh - 54px)";});
     renderNav();renderView();
+    if ("serviceWorker" in navigator) { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {})); }
   </script>
 </body>
 </html>
