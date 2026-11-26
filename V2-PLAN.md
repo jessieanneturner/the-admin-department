@@ -195,3 +195,5 @@ This is a **proof of concept only**. It is not integrated into the V2 interface 
 Verification update — 2026-11-26:
 - Ran the three cryptographic module tests locally with Node.js 22.16.0 after correcting the test harness to use Node's built-in Web Crypto global: **3 passed, 0 failed**.
 - The GitHub Actions workflow file is committed, but GitHub has not reported a workflow run yet; CI is therefore still unverified.
+
+- CI follow-up: corrected the test import path after the first two workflow runs exposed harness issues. GitHub Actions run [45888108610](https://github.com/jessieanneturner/the-admin-department/actions/runs/45888108610) completed successfully on commit `d2a9c41a1adf067dfc5c0f9a299195e35d0cdfa8`; all three cryptographic tests passed.
