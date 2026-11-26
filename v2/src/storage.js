@@ -32,13 +32,29 @@ export function createIndexedDbStorage({ name = "tad-v2-private-vault" } = {}) {
           if (!db.objectStoreNames.contains(META_STORE)) db.createObjectStore(META_STORE);
           if (!db.objectStoreNames.contains(RECORD_STORE)) db.createObjectStore(RECORD_STORE, { keyPath: "id" });
         };
+        let settled = false;
         request.onsuccess = () => {
           const db = request.result;
+          // An open request may succeed after its onblocked event rejected the
+          // promise. Close that late connection rather than leaking it.
+          if (settled) {
+            db.close();
+            return;
+          }
+          settled = true;
           db.onversionchange = () => { db.close(); databasePromise = undefined; };
           resolve(db);
         };
-        request.onerror = () => reject(request.error || new Error("Could not open the T.A.D. vault database."));
-        request.onblocked = () => reject(new Error("The T.A.D. vault database is blocked by another open tab."));
+        request.onerror = () => {
+          if (settled) return;
+          settled = true;
+          reject(request.error || new Error("Could not open the T.A.D. vault database."));
+        };
+        request.onblocked = () => {
+          if (settled) return;
+          settled = true;
+          reject(new Error("The T.A.D. vault database is blocked by another open tab."));
+        };
       });
       const pending = databasePromise;
       pending.catch(() => {
