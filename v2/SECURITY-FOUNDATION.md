@@ -18,8 +18,8 @@ This is a proof of concept, not a complete secure application or a security cert
 
 - It is not connected to the current V2 screen or any department yet.
 - No account authentication, backend, multi-device sync, Google Drive backup, recovery workflow UI, biometric integration, PIN lock, key rotation or device revocation exists.
-- The new IndexedDB adapter and vault manager have not yet been verified in real browsers or on the target Android device.
-- CI for the newly added vault lifecycle tests has not yet been checked.
+- Chromium browser integration tests now verify IndexedDB persistence, encrypted-at-rest record envelopes, locked-state access control, passphrase and recovery-key unlock, deletion, duplicate-vault protection, tamper rejection, concurrent writes, invalid structured-clone writes, retry after an open failure, blocked-schema recovery, and the absence of a plaintext storage fallback. These tests are automated in GitHub Actions; target Android-device testing remains outstanding.
+- Automated Node.js and Chromium browser checks are running in GitHub Actions. Passing CI is a useful engineering gate, not a security certification.
 - A browser profile compromise, malicious extension, XSS, compromised device or an unlocked session can expose data.
 - Browser storage can be cleared by the user, browser or operating system. IndexedDB is not a backup.
 - The recovery key must eventually be displayed safely, confirmed as recorded offline and never included in cloud backup packages.
@@ -39,7 +39,7 @@ The tests use Node's Web Crypto implementation. Production use must be served in
 ## Next gates
 
 1. Confirm CI for the new lifecycle tests and fix any failures.
-2. Add browser-level IndexedDB tests and validate transaction/error handling.
+2. Continue expanding browser-level IndexedDB tests for blocked connections, interrupted operations, quota exhaustion and transaction failure paths.
 3. Design a safe first-run/unlock/recovery UI that never logs or persists plaintext secrets.
 4. Review key lifecycle, passphrase change, recovery-key rotation and memory handling.
 5. Design authenticated account/device management and end-to-end encrypted sync/backup.
