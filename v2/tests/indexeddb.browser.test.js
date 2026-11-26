@@ -307,3 +307,60 @@ test("real Chromium reports unavailable IndexedDB without falling back to plaint
     await new Promise(resolveClose => server.close(resolveClose));
   }
 });
+
+
+test("real Chromium recovers from a blocked IndexedDB upgrade without leaking the late connection", async () => {
+  const { server, url } = await startServer();
+  let browser;
+  try {
+    browser = await chromium.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.goto(url + "/v2/");
+    const result = await page.evaluate(async () => {
+      const { createIndexedDbStorage } = await import("/v2/src/storage.js");
+      const dbName = "tad-browser-blocked-" + crypto.randomUUID();
+      const blockerRequest = indexedDB.open(dbName, 1);
+      const blocker = await new Promise((resolve, reject) => {
+        blockerRequest.onupgradeneeded = () => {
+          blockerRequest.result.createObjectStore("held-open");
+        };
+        blockerRequest.onsuccess = () => resolve(blockerRequest.result);
+        blockerRequest.onerror = () => reject(blockerRequest.error);
+      });
+
+      const storage = createIndexedDbStorage({ name: dbName, version: 2 });
+      let blockedRejected = false;
+      try { await storage.readDescriptor(); }
+      catch (error) { blockedRejected = /blocked/i.test(error.message); }
+
+      blocker.close();
+      await new Promise(resolve => setTimeout(resolve, 50));
+      const retryDescriptor = await storage.readDescriptor();
+      await storage.close();
+
+      let invalidVersionRejected = false;
+      try { createIndexedDbStorage({ name: dbName, version: 0 }); }
+      catch { invalidVersionRejected = true; }
+
+      const deletion = indexedDB.deleteDatabase(dbName);
+      const deleteCompleted = await new Promise(resolve => {
+        deletion.onsuccess = () => resolve(true);
+        deletion.onerror = () => resolve(false);
+        deletion.onblocked = () => resolve(false);
+      });
+      return {
+        blockedRejected,
+        retryDescriptor: retryDescriptor ?? null,
+        invalidVersionRejected,
+        deleteCompleted
+      };
+    });
+    assert.equal(result.blockedRejected, true, "an upgrade blocked by another tab must reject clearly");
+    assert.equal(result.retryDescriptor, null, "the same adapter must recover once the blocking tab closes");
+    assert.equal(result.invalidVersionRejected, true, "invalid schema versions must be rejected immediately");
+    assert.equal(result.deleteCompleted, true, "late successful opens must not leave a database connection behind");
+  } finally {
+    if (browser) await browser.close();
+    await new Promise(resolveClose => server.close(resolveClose));
+  }
+});
