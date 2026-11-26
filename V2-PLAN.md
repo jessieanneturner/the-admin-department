@@ -190,3 +190,8 @@ Added an isolated proof-of-concept under `v2/src/`:
 - `.github/workflows/v2-security-tests.yml`: CI workflow definition for the tests.
 
 This is a **proof of concept only**. It is not integrated into the V2 interface and is not ready for personal data. No login/account service, biometric/PIN integration, key lifecycle UI, sync, Google Drive backup, restore, or device revocation has been implemented. Automated test execution and target-device testing remain verification gates; no successful CI run is claimed yet. Production `main` and the live app remain untouched.
+
+
+Verification update — 2026-11-26:
+- Ran the three cryptographic module tests locally with Node.js 22.16.0 after correcting the test harness to use Node's built-in Web Crypto global: **3 passed, 0 failed**.
+- The GitHub Actions workflow file is committed, but GitHub has not reported a workflow run yet; CI is therefore still unverified.
