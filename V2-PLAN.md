@@ -34,6 +34,20 @@ Build a complete replacement for The Admin Department (T.A.D.) as a private, dep
 
 ## Cross-app features
 
+
+
+- **One connected calendar across T.A.D.** — the Calendar is the central date view for the whole app, not a separate place where users must re-enter dates. Date-bearing records created in other departments should appear automatically as linked calendar entries where appropriate:
+  - Personal Life: birthdays and anniversaries (annual by default), personal appointments and important dates.
+  - Tasks & Reminders: dated tasks, deadlines and reminders.
+  - Routines: each scheduled occurrence, including weekly, fortnightly, monthly or other supported schedules.
+  - Travel: trip start/end dates and relevant itinerary events.
+  - Other departments: any record with a meaningful date can opt into the calendar where appropriate; private content must still respect privacy rules.
+- Each calendar entry must retain a link to its source record and department. The calendar is a unified view of those records, not a second independent copy. Creating or editing a source record updates its calendar representation; it must not create duplicates.
+- Recurrence options should include one-off, daily, weekly, fortnightly, monthly, yearly and a custom interval where practical. Birthday/anniversary records default to yearly recurrence. Users can edit a single occurrence or the whole series; skipped/changed occurrences should be represented as exceptions without corrupting the recurring series.
+- Deleting or archiving a source record must update or remove its linked calendar entry consistently, with clear confirmation where deletion affects a series. Removing a calendar display entry must not unexpectedly delete the source record; offer the appropriate source action instead.
+- Support all-day dates and timed events, clear start/end dates, and correct local-time handling across phone and desktop. Today, calendar views, reminders and weekly overviews must all use the same underlying date/time rules.
+- Calendar filters may let users show or hide categories/departments, but hiding a category must never delete or alter its records.
+
 - **Quick Add** from anywhere: task, appointment, reminder, note, diary entry, habit, birthday/important date, reading journal entry, shopping item, routine, trip or Pinboard item.
 - **Note templates** — offer useful starting layouts when creating a Note, including a **Moodboard** template for collecting photos, recipes, links, colour/theme ideas and written thoughts. Moodboards can reuse items saved on the main Pinboard; they should also allow adding new material directly.
 - **Send to Pinboard** — relevant departments should offer a simple action to save an item or inspiration to the Pinboard without re-entering it. Initial candidates: Personal Shopping (especially wishlist items, product links and photos), Travel (places, activities and trip inspiration), Personal Life (ideas and projects), and Notes. Where practical, save a linked reference to the original item rather than creating a disconnected duplicate; show where an item came from and keep edits/deletion behaviour clear. The user can choose an existing board (or the main board by default) and optionally add a short note. Do not add this action indiscriminately to every record type.
