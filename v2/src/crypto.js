@@ -19,6 +19,7 @@ function toBase64(bytes) {
   return btoa(binary);
 }
 function fromBase64(value) {
+  if (typeof value !== "string" || !value || value.length % 4 !== 0) throw new Error("Invalid encoded vault data.");
   return Uint8Array.from(atob(value), char => char.charCodeAt(0));
 }
 function randomBytes(length) {
@@ -50,11 +51,14 @@ async function wrapRawKey(rawKey, wrappingKey, purpose) {
   return { iv: toBase64(iv), ciphertext: toBase64(new Uint8Array(ciphertext)) };
 }
 async function unwrapRawKey(wrapped, wrappingKey, purpose) {
+  const iv = fromBase64(wrapped.iv);
+  const ciphertext = fromBase64(wrapped.ciphertext);
+  if (iv.length !== 12 || ciphertext.length !== 48) throw new Error("Invalid wrapped vault key.");
   const additionalData = encoder.encode(`TAD|vault|v${FORMAT_VERSION}|${purpose}`);
   return new Uint8Array(await webCrypto().subtle.decrypt(
-    { name: "AES-GCM", iv: fromBase64(wrapped.iv), additionalData, tagLength: 128 },
+    { name: "AES-GCM", iv, additionalData, tagLength: 128 },
     wrappingKey,
-    fromBase64(wrapped.ciphertext)
+    ciphertext
   ));
 }
 async function importDataKey(rawKey) {
@@ -109,10 +113,11 @@ export async function unlockVaultWithRecoveryKey(recoveryKey, descriptor) {
 
 function validateDescriptor(descriptor) {
   if (descriptor?.format !== "TAD-VAULT" || descriptor.version !== FORMAT_VERSION ||
-      descriptor.kdf?.name !== "PBKDF2" || descriptor.kdf.iterations !== PBKDF2_ITERATIONS ||
-      !descriptor.passphraseWrap || !descriptor.recoveryWrap) {
+      descriptor.kdf?.name !== "PBKDF2" || descriptor.kdf.hash !== "SHA-256" ||
+      descriptor.kdf.iterations !== PBKDF2_ITERATIONS || !descriptor.passphraseWrap || !descriptor.recoveryWrap) {
     throw new Error("Unsupported or invalid T.A.D. vault descriptor.");
   }
+  if (fromBase64(descriptor.kdf.salt).length !== 16) throw new Error("Invalid vault key-derivation salt.");
 }
 
 /** Encrypts one JSON record. recordId is authenticated as AES-GCM additional data. */
@@ -121,20 +126,31 @@ export async function encryptRecord(key, recordId, value) {
   const iv = randomBytes(12);
   const additionalData = encoder.encode(`TAD|record|v${FORMAT_VERSION}|${recordId}`);
   const plaintext = encoder.encode(JSON.stringify(value));
-  const ciphertext = await webCrypto().subtle.encrypt(
-    { name: "AES-GCM", iv, additionalData, tagLength: 128 }, key, plaintext
-  );
-  plaintext.fill(0);
-  return { id: recordId, version: FORMAT_VERSION, iv: toBase64(iv), ciphertext: toBase64(new Uint8Array(ciphertext)) };
+  try {
+    const ciphertext = await webCrypto().subtle.encrypt(
+      { name: "AES-GCM", iv, additionalData, tagLength: 128 }, key, plaintext
+    );
+    return { id: recordId, version: FORMAT_VERSION, iv: toBase64(iv), ciphertext: toBase64(new Uint8Array(ciphertext)) };
+  } finally {
+    plaintext.fill(0);
+  }
 }
 
 export async function decryptRecord(key, record) {
-  if (record?.version !== FORMAT_VERSION || !record.id) throw new Error("Unsupported or invalid encrypted record.");
+  if (record?.version !== FORMAT_VERSION || typeof record.id !== "string" || !record.id) {
+    throw new Error("Unsupported or invalid encrypted record.");
+  }
+  const iv = fromBase64(record.iv);
+  if (iv.length !== 12) throw new Error("Invalid encrypted record nonce.");
   const additionalData = encoder.encode(`TAD|record|v${FORMAT_VERSION}|${record.id}`);
-  const plaintext = await webCrypto().subtle.decrypt(
-    { name: "AES-GCM", iv: fromBase64(record.iv), additionalData, tagLength: 128 },
+  const plaintext = new Uint8Array(await webCrypto().subtle.decrypt(
+    { name: "AES-GCM", iv, additionalData, tagLength: 128 },
     key,
     fromBase64(record.ciphertext)
-  );
-  return JSON.parse(decoder.decode(plaintext));
+  ));
+  try {
+    return JSON.parse(decoder.decode(plaintext));
+  } finally {
+    plaintext.fill(0);
+  }
 }
