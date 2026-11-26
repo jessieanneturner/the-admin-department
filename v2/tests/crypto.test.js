@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createVault, unlockVault, unlockVaultWithRecoveryKey, encryptRecord, decryptRecord } from "../crypto.js";
+import { createVault, unlockVault, unlockVaultWithRecoveryKey, encryptRecord, decryptRecord } from "../src/crypto.js";
 
 test("vault encrypts records and unlocks with passphrase and independent recovery key", async () => {
   const { descriptor, recoveryKey, key } = await createVault("A-long-unique-test-passphrase!");
