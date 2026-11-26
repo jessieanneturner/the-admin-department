@@ -30,16 +30,18 @@ Build a complete replacement for The Admin Department (T.A.D.) as a private, dep
 11. **Savings** — one overall savings balance, manual deposits/withdrawals and transaction history; no goal pots or bank linking.
 12. **Archive & Recycle Bin** — archived items and recoverable deleted items, with clear restore and permanent-delete controls.
 13. **Settings** — security, backups, sync, notifications, data export/import, privacy and customisation.
+14. **Pinboard** — a central inspiration space for saving photos, recipes, links and miscellaneous ideas. Start with one main board, with optional user-created boards/categories for organising items when wanted. Saved items can have a title, source link, caption/notes, tags and image where applicable. Items should be reusable in Notes/Moodboards without uploading the same image again.
 
 ## Cross-app features
 
-- **Quick Add** from anywhere: task, appointment, reminder, note, diary entry, habit, birthday/important date, reading journal entry, shopping item, routine, trip.
-- **Global search** across all relevant departments, respecting privacy boundaries.
+- **Quick Add** from anywhere: task, appointment, reminder, note, diary entry, habit, birthday/important date, reading journal entry, shopping item, routine, trip or Pinboard item.
+- **Note templates** — offer useful starting layouts when creating a Note, including a **Moodboard** template for collecting photos, recipes, links, colour/theme ideas and written thoughts. Moodboards can reuse items saved on the main Pinboard; they should also allow adding new material directly.
+- **Global search** across all relevant departments, including Pinboard items, respecting privacy boundaries.
 - **Weekly Overview** notification on Sunday evening. Review upcoming appointments, tasks, birthdays, routines, unfinished items and Notes. Notes are reviewed and can be converted into tasks, reminders or calendar events.
 - **Monthly Reset** notification on the last day of each month. Review savings, habits/routines, reading journal, upcoming birthdays, unfinished tasks and next-month organisation.
 - Notifications should contain only general information; never expose private diary, private notes or reading reflections.
 - **Recurring reminders** for bills, renewals and other repeating responsibilities.
-- **Reliable export** so the user can retrieve their data in a documented format.
+- **Reliable export** so the user can retrieve their data in a documented format, including Pinboard metadata and user-owned uploaded images where technically possible.
 - **Phone/desktop sync** with conflict detection and safe resolution; never silently overwrite a newer edit.
 - Widget may show appointments, reminders and task summaries only, with general information and no private content.
 - Future ChatGPT connection may create items in T.A.D. only through an authenticated integration and explicit confirmation before any write.
@@ -73,7 +75,8 @@ V2 is not ready for personal use until these are implemented and tested:
 ### Phase 2 — complete app shell and departments
 - Build the full navigation, design system, responsive phone/desktop layout and all department views.
 - Implement core data models and CRUD flows, archive/recycle bin, search, Quick Add and export.
-- Add the Reading Journal, Personal Shopping improvements and Travel structure.
+- Add the Reading Journal, Personal Shopping improvements, Travel structure and Pinboard.
+- Add Note templates, including Moodboard, with reusable links to Pinboard items.
 
 ### Phase 3 — cross-department workflows
 - Calendar checkbox creates a linked packing list.
