@@ -43,10 +43,10 @@ test("real Chromium IndexedDB vault persistence, encryption and recovery", async
   try {
     browser = await chromium.launch({ headless: true });
     const page = await browser.newPage();
-    await page.goto(url + "/");
+    await page.goto(url + "/v2/");
     const result = await page.evaluate(async () => {
-      const { createIndexedDbStorage } = await import("/src/storage.js");
-      const { createVaultManager } = await import("/src/vault.js");
+      const { createIndexedDbStorage } = await import("/v2/src/storage.js");
+      const { createVaultManager } = await import("/v2/src/vault.js");
       const dbName = "tad-browser-test-" + crypto.randomUUID();
       const passphrase = "Browser-test-only-long-passphrase-2026!";
       const firstStorage = createIndexedDbStorage({ name: dbName });
