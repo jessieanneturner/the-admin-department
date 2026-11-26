@@ -191,7 +191,7 @@ test("real Chromium persists concurrent record writes and rejects uncloneable va
         reopenedCount
       };
     });
-    assert.deepEqual(result.ids, Array.from({ length: 12 }, (_, index) => "record-" + index));
+    assert.deepEqual(result.ids, Array.from({ length: 12 }, (_, index) => "record-" + index).sort());
     assert.equal(result.uncloneableValueRejected, true, "IndexedDB must reject values it cannot safely clone");
     assert.equal(result.savedCountAfterInvalidWrite, 12, "a failed write must not corrupt existing records");
     assert.equal(result.reopenedCount, 12, "all concurrent successful writes must persist");
