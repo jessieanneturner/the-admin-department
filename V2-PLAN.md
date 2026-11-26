@@ -105,6 +105,12 @@ The following is the proposed design direction. It must be proven with working p
 - **Automatic backup controls:** allow the user to enable/disable automatic backups, see the last successful backup, retry failures and run a manual backup/restore. Do not claim a backup exists until upload and integrity verification succeed.
 - **Agreed delivery architecture (user approved 2026-11-26):** one shared application/codebase and account/data model, packaged for Android with **Capacitor** so Android can use native system biometrics and Android Keystore, and delivered on Windows as an installable **Progressive Web App (PWA)** through a supported browser. Both clients use the same authenticated, encrypted sync service and data model; they are not separate apps or separate datasets. Validate platform support with small security proof-of-concepts before relying on any API. Keep a future Windows desktop wrapper as an option only if PWA capabilities prove insufficient; do not introduce a second codebase.
 
+## Build progress (2026-11-26)
+- Agreed architecture recorded: shared application, Capacitor Android client, installable Windows PWA.
+- Added the first PWA packaging foundations under `v2/`: web app manifest, T.A.D. SVG app icon, service worker and static app-shell caching registration.
+- This is an installability/offline-shell foundation only. It does **not** yet provide secure personal-data storage, authentication, encryption, account recovery, backups, multi-device sync or a releasable private app. Do not enter personal data.
+- Next engineering priority: security architecture proof-of-concepts and a real application data layer, followed by working department workflows. Keep production `main` untouched.
+
 ## Development sequence
 
 ### Phase 0 — protect and specify
