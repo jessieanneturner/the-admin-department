@@ -40,6 +40,11 @@ export function createIndexedDbStorage({ name = "tad-v2-private-vault" } = {}) {
         request.onerror = () => reject(request.error || new Error("Could not open the T.A.D. vault database."));
         request.onblocked = () => reject(new Error("The T.A.D. vault database is blocked by another open tab."));
       });
+      const pending = databasePromise;
+      pending.catch(() => {
+        // Do not cache a failed open forever: storage may become available later.
+        if (databasePromise === pending) databasePromise = undefined;
+      });
     }
     return databasePromise;
   }
