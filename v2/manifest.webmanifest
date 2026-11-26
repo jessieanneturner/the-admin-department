@@ -1,0 +1,17 @@
+{
+  "id": "./",
+  "name": "T.A.D. — The Admin Department",
+  "short_name": "T.A.D.",
+  "description": "A calm place to keep life's little details in order.",
+  "lang": "en-GB",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F6F2E9",
+  "theme_color": "#203B30",
+  "icons": [
+    { "src": "./icon-tad.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "./icon-tad.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
